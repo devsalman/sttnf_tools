@@ -1,5 +1,6 @@
 import os
 import csv
+from datetime import datetime
 
 def parse_csv_files(data_dir='data'):
     base = os.path.join(os.path.dirname(__file__), data_dir)
@@ -14,6 +15,7 @@ def parse_csv_files(data_dir='data'):
             mata_kuliah = None
             pengajar = None
             kode_kelas = None
+            tahun_akademik = fname.split('_')[0]
             
             for row in reader:
                 row_data = row
@@ -28,7 +30,6 @@ def parse_csv_files(data_dir='data'):
                     nilai = row_data[3].strip()
                     nilai_angka = row_data[4].strip()
                     nilai_huruf = row_data[5].strip()
-                    tahun_akademik = '2024-1'
                     
                     result_rows = [
                         nim, nama, nilai, nilai_angka, nilai_huruf,
@@ -46,7 +47,12 @@ if __name__ == '__main__':
     for data in parse_csv_files():
         data_rows.append(data)
 
-    with open('output.csv', 'w', newline='', encoding='utf-8') as out_file:
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    output_filename = f'output_{timestamp}.csv'
+    out_dir = os.path.join(os.path.dirname(__file__), 'out')
+    os.makedirs(out_dir, exist_ok=True)
+    output_filename = os.path.join(out_dir, output_filename)
+    with open(output_filename, 'w', newline='', encoding='utf-8') as out_file:
         writer = csv.writer(out_file)
         writer.writerow(headers)
         writer.writerows(data_rows)
